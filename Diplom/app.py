@@ -7,7 +7,9 @@ from datetime import date
 from decimal import Decimal
 from collections import defaultdict
 import random
-
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from .config import config
 from .models import db, User, Category, Transaction, Budget
 from .utils import analyze_expenses_by_category
@@ -17,8 +19,13 @@ from calendar import monthrange
 
 app = Flask(__name__)
 app.config.from_object(config)
+db = SQLAlchemy()
 CORS(app)
 db.init_app(app)
+migrate = Migrate(app, db)
+with app.app_context():
+    from flask_migrate import upgrade
+    upgrade()
 
 login_manager = LoginManager()
 login_manager.init_app(app)
