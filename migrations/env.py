@@ -9,7 +9,7 @@ from alembic import context
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Импорт конфигурации и моделей
-from config import DevelopmentConfig  # или ProductionConfig, если нужно
+from Diplom.config import DevelopmentConfig
 from models import db
 
 # Alembic Config объект (alembic.ini)
