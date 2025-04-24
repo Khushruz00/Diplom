@@ -1,0 +1,29 @@
+# VS Code / Visual Studio
+.vscode/
+.vs/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.sqlite3
+*.log
+*.db
+
+# Environment
+.env
+.venv/
+env/
+venv/
+
+# Alembic cache
+migrations/__pycache__/
+
+# Jupyter & IPython
+.ipynb_checkpoints
+
+# OS
+Thumbs.db
+.DS_Store
