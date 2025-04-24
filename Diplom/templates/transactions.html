@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}Транзакции | Neofinance{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold text-gradient">📒 Доходы и расходы</h3>
+    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
+        ➕ Добавить
+    </button>
+</div>
+
+<form class="row g-3 mb-4" method="GET" action="{{ url_for('get_transactions') }}">
+    <div class="col-md-4">
+        <input type="text" name="q" class="form-control" placeholder="🔍 Поиск по описанию или категории"
+               value="{{ request.args.get('q', '') }}">
+    </div>
+    <div class="col-md-3">
+        <input type="date" name="start_date" class="form-control" value="{{ request.args.get('start_date', '') }}">
+    </div>
+    <div class="col-md-3">
+        <input type="date" name="end_date" class="form-control" value="{{ request.args.get('end_date', '') }}">
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-outline-dark w-100">🎯 Фильтр</button>
+    </div>
+</form>
+
+<div class="table-responsive shadow-sm rounded-4 overflow-hidden">
+    <table class="table table-borderless align-middle mb-0">
+        <thead class="table-light">
+            <tr class="text-uppercase small text-muted">
+                <th>Дата</th>
+                <th>Категория</th>
+                <th>Описание</th>
+                <th class="text-end">Доход</th>
+                <th class="text-end">Расход</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in transactions %}
+            <tr class="border-top">
+                <td>{{ t.transaction_date.strftime('%d.%m.%Y') }}</td>
+                <td>
+                    <span class="badge rounded-pill {% if t.category.is_income %}bg-success-subtle text-success{% else %}bg-danger-subtle text-danger{% endif %}">
+                        {{ t.category.name }}
+                    </span>
+                </td>
+                <td>{{ t.description or '—' }}</td>
+                <td class="text-end text-success fw-semibold">
+                    {% if t.category.is_income %}
+                    {{ "{:,.2f}".format(t.amount).replace(",", " ") }} ₽
+                    {% endif %}
+                </td>
+                <td class="text-end text-danger fw-semibold">
+                    {% if not t.category.is_income %}
+                    {{ "{:,.2f}".format(t.amount).replace(",", " ") }} ₽
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" class="text-center text-muted py-4">⛔ Нет записей за выбранный период</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Модалка -->
+<div class="modal fade" id="addTransactionModal" tabindex="-1" aria-labelledby="addTransactionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="POST" action="{{ url_for('add_transaction') }}" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTransactionModalLabel">Новая транзакция</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Сумма</label>
+                    <input type="number" name="amount" class="form-control" step="0.01" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Категория</label>
+                    <select class="form-select" name="category_id" required>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}">{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Описание</label>
+                    <input type="text" name="description" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Дата</label>
+                    <input type="date" name="transaction_date" class="form-control" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary w-100">💾 Сохранить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .text-gradient {
+        background: linear-gradient(to right, #3b82f6, #9333ea);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .bg-success-subtle {
+        background-color: #dcfce7 !important;
+    }
+
+    .bg-danger-subtle {
+        background-color: #fee2e2 !important;
+    }
+
+    .modal-content {
+        border-radius: 1rem;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Категории | Neofinance{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold text-gradient">📂 Категории</h3>
+    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+        ➕ Добавить категорию
+    </button>
+</div>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for category in categories %}
+    <div class="col">
+        <div class="card shadow-sm border-0 h-100" style="border-radius: 14px;">
+            <div class="card-body d-flex flex-column justify-content-between">
+                <div class="mb-2">
+                    <h5 class="card-title mb-2 fw-semibold d-flex align-items-center justify-content-between">
+                        {{ category.name }}
+                        {% if category.is_income %}
+                        <span class="badge text-bg-success rounded-pill px-3 py-1">⬆ Доход</span>
+                        {% else %}
+                        <span class="badge text-bg-danger rounded-pill px-3 py-1">⬇ Расход</span>
+                        {% endif %}
+                    </h5>
+                    <p class="text-muted small mb-0">{{ category.description or 'Без описания' }}</p>
+                </div>
+                <form method="POST" action="{{ url_for('delete_category', category_id=category.id) }}"
+                      onsubmit="return confirm('Удалить категорию «{{ category.name }}»?');">
+                    <button type="submit" class="btn btn-sm btn-outline-danger mt-3 w-100">
+                        🗑️ Удалить
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="POST" action="/add_category" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCategoryModalLabel">Создание категории</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Название</label>
+                    <input type="text" name="name" id="name" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Описание</label>
+                    <input type="text" name="description" id="description" class="form-control">
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" name="is_income" id="is_income">
+                    <label class="form-check-label" for="is_income">
+                        Отметить как доход
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary w-100">💾 Сохранить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .text-gradient {
+        background: linear-gradient(90deg, #2563eb, #9333ea);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+</style>
+{% endblock %}

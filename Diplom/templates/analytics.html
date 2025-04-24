@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Анализ расходов{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-primary">📊 Анализ расходов</h2>
+        <p class="text-muted">График показывает распределение ваших расходов по категориям</p>
+    </div>
+
+    <div class="d-flex justify-content-center">
+        <div class="card shadow-sm p-4 rounded-4" style="max-width: 500px; width: 100%;">
+            <canvas id="expenseChart" height="300"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('expenseChart').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ labels | tojson }},
+            datasets: [{
+                label: 'Расходы',
+                data: {{ values | tojson }},
+                backgroundColor: [
+                    '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796'
+                ],
+                borderColor: '#fff',
+                borderWidth: 2,
+                hoverOffset: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '55%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#555',
+                        font: { size: 14 }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return `${context.label}: ${context.formattedValue} ₽`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

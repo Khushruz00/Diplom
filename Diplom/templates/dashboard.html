@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}Личный кабинет | Neofinance{% endblock %}
+{% block content %}
+<div class="container py-4">
+
+    <h3 class="fw-bold text-primary-emphasis mb-4">👋 Добро пожаловать в Neofinance</h3>
+
+    <!-- Информационные карточки -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Баланс</h6>
+                    <h4 class="fw-bold text-primary">{{ balance }} ₽</h4>
+                    <small class="text-muted">Текущий остаток</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Доходы</h6>
+                    <h4 class="fw-bold text-success">{{ incomes }} ₽</h4>
+                    <small class="text-muted">За период</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Расходы</h6>
+                    <h4 class="fw-bold text-danger">{{ expenses }} ₽</h4>
+                    <small class="text-muted">За период</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Последние транзакции -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white fw-semibold fs-5">🧾 Последние транзакции</div>
+        <div class="card-body">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Дата</th>
+                        <th>Категория</th>
+                        <th>Сумма</th>
+                        <th>Описание</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in transactions %}
+                    <tr>
+                        <td>{{ t.transaction_date }}</td>
+                        <td>
+                            <span class="badge bg-{{ 'success' if t.category.is_income else 'danger' }}">{{ t.category.name }}</span>
+                        </td>
+                        <td class="fw-medium {% if t.category.is_income %}text-success{% else %}text-danger{% endif %}">
+                            {{ t.amount }} ₽
+                        </td>
+                        <td>{{ t.description or '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- График -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white fw-semibold fs-5">📈 Анализ доходов и расходов</div>
+        <div class="card-body">
+            <canvas id="balanceChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('balanceChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ chart_data.labels | tojson }},
+            datasets: [
+                {
+                    label: 'Доходы',
+                    data: {{ chart_data.incomes | tojson }},
+                    borderColor: 'rgba(25, 135, 84, 0.9)',
+                    backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                },
+                {
+                    label: 'Расходы',
+                    data: {{ chart_data.expenses | tojson }},
+                    borderColor: 'rgba(220, 53, 69, 0.9)',
+                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    ticks: {
+                        callback: value => value + ' ₽'
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

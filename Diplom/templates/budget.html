@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Планирование бюджета{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h3 class="text-success fw-bold mb-4">📊 Планирование бюджета</h3>
+
+    <form method="POST" action="{{ url_for('set_budget') }}" class="row g-3 shadow-sm p-4 bg-light rounded-3">
+        <div class="col-md-6">
+            <label class="form-label">Категория</label>
+            <select name="category_id" class="form-select" required>
+                {% for c in categories %}
+                <option value="{{ c.id }}">{{ c.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Сумма на месяц (₽)</label>
+            <input type="number" step="0.01" name="limit" class="form-control" required>
+        </div>
+        <div class="col-12 text-end">
+            <button type="submit" class="btn btn-primary">💾 Сохранить лимит</button>
+        </div>
+    </form>
+
+    <hr class="my-4">
+
+    <h5 class="mb-3">📌 Установленные лимиты</h5>
+    {% if budgets %}
+    <div class="row g-3">
+        {% for b in budgets %}
+        {% set percent = (b.spent / b.amount * 100) if b.amount else 0 %}
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title">{{ b.category }}</h6>
+                    <p class="card-text mb-2 text-muted">
+                        Потрачено: {{ "%.2f"|format(b.spent) }} ₽ из {{ "%.2f"|format(b.amount) }} ₽
+                        {% if b.exceeded %}
+                        <span class="badge bg-danger ms-2">Превышен</span>
+                        {% endif %}
+                    </p>
+                    <div class="progress">
+                        <div class="progress-bar {% if b.exceeded %}bg-danger{% else %}bg-success{% endif %}"
+                             role="progressbar"
+                             style="width: {{ percent if percent <= 100 else 100 }}%;"
+                             aria-valuenow="{{ percent }}"
+                             aria-valuemin="0"
+                             aria-valuemax="100">
+                            {{ percent|round(0) }}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-warning mt-3">⛔ Пока не установлено ни одного лимита.</div>
+    {% endif %}
+</div>
+{% endblock %}
