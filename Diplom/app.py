@@ -7,6 +7,7 @@ from datetime import date
 from decimal import Decimal
 from collections import defaultdict
 import random
+from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from .config import config
 from .models import db, User, Category, Transaction, Budget
