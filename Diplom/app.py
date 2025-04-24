@@ -7,14 +7,11 @@ from datetime import date
 from decimal import Decimal
 from collections import defaultdict
 import random
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from .config import config
 from .models import db, User, Category, Transaction, Budget
 from .utils import analyze_expenses_by_category
 from .forms import RegistrationForm
-from datetime import date
 from calendar import monthrange
 
 app = Flask(__name__)
