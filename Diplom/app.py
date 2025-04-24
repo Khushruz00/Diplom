@@ -8,7 +8,7 @@ from decimal import Decimal
 from collections import defaultdict
 import random
 
-from config import config
+from .config import config
 from models import db, User, Category, Transaction, Budget
 from utils import analyze_expenses_by_category
 from forms import RegistrationForm
