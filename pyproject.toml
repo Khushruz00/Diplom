@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "diplom"
+name = "Diplom"
 version = "0.1.0"
 description = "Diplom Flask app for Render"
 authors = ["Твоё Имя <email@example.com>"]
