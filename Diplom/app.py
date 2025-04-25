@@ -6,25 +6,25 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date
 from decimal import Decimal
 from collections import defaultdict
-import random
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from .config import config
-from .models import db, User, Category, Transaction, Budget
-from .utils import analyze_expenses_by_category
-from .forms import RegistrationForm
 from calendar import monthrange
 
+from Diplom.config import config
+from Diplom.models import db, User, Category, Transaction, Budget
+from Diplom.forms import RegistrationForm
+from Diplom.utils import analyze_expenses_by_category
+
+from flask_migrate import Migrate
+
+# --- ИНИЦИАЛИЗАЦИЯ ---
 app = Flask(__name__)
 app.config.from_object(config)
-db = SQLAlchemy()
 CORS(app)
+
+# Инициализируем БД и миграции
 db.init_app(app)
 migrate = Migrate(app, db)
-with app.app_context():
-    from flask_migrate import upgrade
-    upgrade()
 
+# Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
@@ -55,7 +55,6 @@ def analytics():
     values = list(expenses_by_category.values())
 
     return render_template('analytics.html', labels=labels, values=values)
-
 
 # ======================== БЮДЖЕТ ========================
 @app.route('/budget')
@@ -93,7 +92,7 @@ def set_budget():
     year = today.year
     month = today.month
     first_day = date(year, month, 1)
-    last_day = date(year, month, monthrange(year, month)[1])  # Последний день текущего месяца
+    last_day = date(year, month, monthrange(year, month)[1])
 
     budget = Budget(
         user_id=current_user.id,
@@ -107,14 +106,13 @@ def set_budget():
     flash("Бюджет установлен", "success")
     return redirect(url_for('budget'))
 
-
 # ======================== СОВЕТЫ ========================
 @app.route('/tips')
 @login_required
 def tips():
     return render_template('tips.html')
 
-# ======================== АВТОРИЗАЦИЯ ========================
+# ======================== РЕГИСТРАЦИЯ ========================
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
@@ -136,6 +134,7 @@ def register():
             return redirect(url_for('login'))
     return render_template('auth.html', form=form)
 
+# ======================== ЛОГИН ========================
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = RegistrationForm()
