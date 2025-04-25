@@ -1,2 +1,3 @@
 #!/bin/bash
-poetry run flask db upgrade
+export FLASK_APP=Diplom.app
+flask db upgrade
