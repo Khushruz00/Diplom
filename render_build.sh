@@ -1,2 +1,2 @@
 #!/bin/bash
-flask db upgrade
+poetry run flask db upgrade
