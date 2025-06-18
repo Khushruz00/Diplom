@@ -51,7 +51,7 @@ class Budget(db.Model):
     __tablename__ = 'budget'
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('public.user.id'), nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
     amount = db.Column(db.Numeric(10, 2), nullable=False)
     start_date = db.Column(db.Date, nullable=False)
@@ -67,7 +67,7 @@ class Category(db.Model):
     __tablename__ = 'category'  # ñîîòâåòñòâóåò SQL-òàáëèöå
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('public.user.id'), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(255))
     is_income = db.Column(db.Boolean, default=False)
@@ -81,7 +81,7 @@ class Transaction(db.Model):
     __tablename__ = 'transaction'  # ñîîòâåòñòâóåò SQL-òàáëèöå
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('public.user.id'), nullable=False)
     amount = db.Column(db.Numeric(10, 2), nullable=False)
     description = db.Column(db.String(255))
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
