@@ -10,6 +10,7 @@ db = SQLAlchemy()
 
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
+__table_args__ = {'schema': 'public'}
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False, index=True)
@@ -63,7 +64,7 @@ class Budget(db.Model):
 
 
 class Category(db.Model):
-    __tablename__ = 'category'  # соответствует SQL-таблице
+    __tablename__ = 'category'  # Г±Г®Г®ГІГўГҐГІГ±ГІГўГіГҐГІ SQL-ГІГ ГЎГ«ГЁГ¶ГҐ
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -77,7 +78,7 @@ class Category(db.Model):
 
 
 class Transaction(db.Model):
-    __tablename__ = 'transaction'  # соответствует SQL-таблице
+    __tablename__ = 'transaction'  # Г±Г®Г®ГІГўГҐГІГ±ГІГўГіГҐГІ SQL-ГІГ ГЎГ«ГЁГ¶ГҐ
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
