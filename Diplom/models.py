@@ -10,7 +10,7 @@ db = SQLAlchemy()
 
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
-__table_args__ = {'schema': 'public'}
+    __table_args__ = {'schema': 'public'}  # 🔧 с отступом!
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False, index=True)
